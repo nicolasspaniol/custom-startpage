@@ -39,7 +39,7 @@ function updateDateTime() {
     day: "numeric"
   });
 }
-setInterval(updateDateTime, 5000);
+setInterval(updateDateTime, 10000);
 updateDateTime();
 
 // Weather
