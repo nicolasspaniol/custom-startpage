@@ -16,9 +16,7 @@ const WEATHER_HOUR_STEP = 2;
 
 // Search bar
 
-function initSearch() {
-  ids.searchIcon.onclick = () => ids.searchForm.submit();
-}
+ids.searchIcon.onclick = () => ids.searchForm.submit();
 
 // Datetime
 
@@ -132,12 +130,10 @@ if (navigator.geolocation) {
 
 // Notes
 
-function initNotes() {
-  window.onbeforeunload = () => {
-    localStorage.setItem("notes", encodeURIComponent(ids.notesQuad.value));
-  };
-  ids.notesQuad.value = decodeURIComponent(localStorage.getItem("notes"));
-}
+window.onbeforeunload = () => {
+  localStorage.setItem("notes", encodeURIComponent(ids.notesQuad.value));
+};
+ids.notesQuad.value = decodeURIComponent(localStorage.getItem("notes"));
 
 // Bookmarks
 
@@ -186,9 +182,4 @@ async function initBookmarks(path) {
     }
   );
 }
-
-// Initial page state
-
-initSearch();
-initNotes();
 initBookmarks("bookmarks.json");
