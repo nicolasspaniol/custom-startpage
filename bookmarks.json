@@ -1,0 +1,13 @@
+{
+  "Youtube": "https://www.youtube.com/feed/subscriptions",
+  "Spotify": "https://www.youtube.com/feed/subscriptions",
+  "Twitch": "https://www.youtube.com/feed/subscriptions",
+  "Reddit": "https://www.youtube.com/feed/subscriptions",
+  "Hacker News": "https://www.youtube.com/feed/subscriptions",
+  "Twitter": "https://www.youtube.com/feed/subscriptions",
+  "Skiley": "https://www.youtube.com/feed/subscriptions",
+  "Google": {
+    "Classroom": "https://classroom.google.com/u/1/h",
+    "Gmail": "https://mail.google.com/mail/u/0"
+  }
+}

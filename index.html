@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startpage</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css" integrity="sha256-XoaMnoYC5TH6/+ihMEnospgm0J1PM/nioxbOUdnM8HY=" crossorigin="anonymous">
+    <script src="main.js" type="module" defer></script>
+  </head>
+  <body>
+    <textarea id="notes-quad" class="quad outline" spellcheck="false"></textarea>
+    <div id="search-quad" class="quad">
+      <h1>google?</h1>
+      <form action="https://www.google.com/search" id="search-form" method="get" class="outline">
+        <input type="text" name="q" id="search" autofocus value="" autocomplete="off"><!--
+     --><i class="fa fa-search" id="search-icon" aria-hidden="true"></i>
+      </form>
+    </div>
+    <div id="bookmarks-quad" class="quad outline">
+      <h1>bookmarks</h1>
+    </div>
+    <div class="quad"></div>
+    <div id="time-quad" class="quad outline center">
+      <h1 id="time">[time]</h1>
+      <h1 id="date">[date]</h1>
+      <div id="weather" class="center"><br><br><i class="fa fa-spinner fa-spin fa-2x fa-fw"></i></div>
+    </div>
+  </body>
+</html>
