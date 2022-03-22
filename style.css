@@ -80,22 +80,13 @@ h1, h2 {
 
 /* Datetime and weather quad */
 
-
-#time-quad {
-  padding-bottom: 30px;
-}
 #time {
   font-size: 30px;
 }
-#weather {
-  margin-top: 15px;
-  height: 50px;
-  width: 70%;
-}
-#weather svg {
-  width: 100%;
-  scale: 1 -1;
-  height: 100%;
+#clock {
+  width: 250px;
+  height: 250px;
+  position: absolute;
 }
 
 /* Bookmarks quad */

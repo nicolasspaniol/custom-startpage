@@ -4,6 +4,7 @@ import {
   addUrlParameters,
   getElementsWithId
 } from "./util.js";
+import calculateSpline from "./spline.js";
 
 const ids = getElementsWithId();
 
@@ -11,121 +12,150 @@ const ids = getElementsWithId();
 
 const WEATHER_URL = "https://api.openweathermap.org/data/2.5/onecall";
 const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
-const WEATHER_HOURS_COUNT = 24;
-const WEATHER_HOUR_STEP = 2;
 
 // Search bar
 
 ids.searchIcon.onclick = () => ids.searchForm.submit();
 
-// Datetime
+// Clock
+
+let clockCtx;
+function initClock() {
+  const clockSize = ids.clock.getBoundingClientRect().width;
+  ids.clock.width = clockSize;
+  ids.clock.height = clockSize;
+  clockCtx = ids.clock.getContext("2d");
+}
+function drawClock(weatherData = null) {
+
+  // Clear transformations and content
+  clockCtx.setTransform(1, 0, 0, 1, 0, 0);
+  clockCtx.clearRect(0, 0, ids.clock.width, ids.clock.height);
+
+  // Move point (0, 0) to the center
+  const halfSize = ids.clock.width >> 1;
+  clockCtx.translate(halfSize, halfSize);
+  
+  // Rotate canvas according to time of the day
+  const rotation = ((currentDateTime.getHours() + 6) * 60 + currentDateTime.getMinutes()) / 360 * Math.PI;
+  clockCtx.rotate(rotation);
+
+  const maxRadius = halfSize - 3;
+  clockCtx.strokeStyle = "#fff";
+  
+  const outerCircleRadius = maxRadius * .6;
+
+  // Draw outer circle
+  clockCtx.beginPath();
+  clockCtx.arc(0, 0, outerCircleRadius, 0, Math.PI * 2, true);
+  clockCtx.stroke();
+
+  // Draw pointer
+  clockCtx.beginPath();
+  clockCtx.moveTo(0, outerCircleRadius);
+  clockCtx.lineTo(0, maxRadius);
+  clockCtx.stroke();
+
+  if (weatherData != null) {
+
+    // Draws those fancy lines around the clock
+    function drawCircularGraph(lineColor, data) {
+
+      // Transform raw data into spline
+      const spline = calculateSpline(data, 20, undefined, data[data.length - 1]);
+
+      // Translates the values and their current point in time to 2d coordinates on the canvas
+      function getPointPos(val, t) {
+        const distanceFromCenter = val * maxRadius * .4 + outerCircleRadius;
+        const angle = -t / 120 * Math.PI;
+        return {
+          x: Math.sin(angle) * distanceFromCenter,
+          y: Math.cos(angle) * distanceFromCenter  
+        }
+      }
+
+      // Translate spline data into 2d coordinates around the clock
+      const points = spline.map((val, i) => getPointPos(val, i));
+
+      clockCtx.strokeStyle = lineColor;
+      clockCtx.beginPath();
+      clockCtx.moveTo(points[0].x, points[0].y);
+      for (let t = 1; t < points.length; t++) {
+        clockCtx.lineTo(points[t].x, points[t].y);
+      }
+      clockCtx.stroke();
+      clockCtx.closePath();
+    }
+
+    drawCircularGraph("#fff", weatherData.map(el => el.clouds / 100));
+    drawCircularGraph("#0df", weatherData.map(el => el.pop));
+  }
+}
+initClock();
+
+// DateTime
+
+let currentDateTime;
 
 function formatTime(hours, mins) {
   return hours.toString().padStart(2, "0") + ":" + mins.toString().padStart(2, "0");
 }
 
-function updateDateTime() {
-  const dateTime = new Date();
+async function updateDateTime() {
+  currentDateTime = new Date();
   
-  const hour = dateTime.getHours();
-  const minute = dateTime.getMinutes();
+  const hour = currentDateTime.getHours();
+  const minute = currentDateTime.getMinutes();
   
   ids.time.innerHTML = formatTime(hour, minute);
 
-  ids.date.innerHTML = dateTime.toLocaleString(undefined, {
-    weekday: "short",
+  ids.date.innerHTML = currentDateTime.toLocaleString(undefined, {
     year: "numeric",
     month: "numeric",
     day: "numeric"
   });
+
+  drawClock(await getWeatherData());
 }
 setInterval(updateDateTime, 10000);
 updateDateTime();
 
 // Weather
 
-function displayWeather(data) {
-  if (data === null) {
-    ids.weather.innerHTML = "No weather data available";
-    return;
+async function getWeatherData() {
+  if (!navigator.geolocation) return null;
+
+  if (localStorage.getItem("weatherLastUpdate") == currentDateTime.getHours()) {
+    return JSON.parse(localStorage.getItem("weatherData"));
   }
 
-  const weatherRect = ids.weather.getBoundingClientRect();
-  const cloudPoints = [];
-  const popPoints = [];
+  const pos = await new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      success => resolve(success),
+      error => reject(error)
+    );
+  }).catch(
+    () => console.error("Unable to retrieve current position")
+  );
+  const lat  = pos.coords.latitude;
+  const lon = pos.coords.longitude;
 
-  const hoursLabel = document.createElement("div");
-  hoursLabel.style.cssText = `
-    width: ${weatherRect.width}px;
-    display: flex;
-    position: relative;
-  `;
-  const timezoneOffset = new Date().getTimezoneOffset() / 60;
-
-  const hourWidth = weatherRect.width / (WEATHER_HOURS_COUNT - 1);
-  const heightMultiplier = weatherRect.height / 105;
-
-  for (let i = 0; i < WEATHER_HOURS_COUNT; i++) {
-    const x = i * hourWidth;
-    const hourData = data.hourly[i];
-
-    cloudPoints.push(x + "," + (hourData.clouds * heightMultiplier + 1));
-    popPoints.push(x + "," + (hourData.pop * 100 * heightMultiplier + 1));
-
-    if (i % WEATHER_HOUR_STEP == 0) {
-      const hourElem = document.createElement("h1");
-      hourElem.innerHTML = ((hourData.dt / 3600 - timezoneOffset) % 24).toString().padStart(2, "0");
-      hourElem.style.cssText = `
-        writing-mode: vertical-rl;
-        position: absolute;
-        font-size: 12px;
-        top: 0;
-        left: ${x - 8}px;
-        scale: -1 -1;
-        margin: 10px 0;
-      `;
-      hoursLabel.append(hourElem);
-    }
-  }
-
-  ids.weather.innerHTML = `
-  <svg viewBox="0 0 ${weatherRect.width} ${weatherRect.height}" xmlns="http://www.w3.org/2000/svg">
-    <polyline points="${cloudPoints.join(" ")}" fill="none" stroke="white"/>
-    <polyline points="${popPoints.join(" ")}" fill="none" stroke="cyan"/>
-  </svg>`;
-
-  ids.weather.after(hoursLabel);
-}
-
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos => {
-    const lat  = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-
-    const url = addUrlParameters(WEATHER_URL, {
-      lat,
-      lon,
-      appid: WEATHER_KEY,
-      exclude: "minutely,daily,alerts,current",
-      units: "metric"
-    });
-
-    fetch(url).then(response => {
-      response.json().then(data => {
-        displayWeather(data);
-      });
-    },
-    () => {
-      console.error("Unable to get weather data");
-      displayWeather(null);
-    })
-  },
-  () => {
-    console.error("Unable to retrieve current position");
-    displayWeather(null);
-  }, {
-    maximumAge: Infinity
+  const url = addUrlParameters(WEATHER_URL, {
+    lat,
+    lon,
+    appid: WEATHER_KEY,
+    exclude: "minutely,daily,alerts,current",
+    units: "metric"
   });
+
+  const jsonData = await fetch(url).catch(
+    () => console.error("Unable to get weather data")
+  );
+  const data = (await jsonData.json()).hourly.slice(0, 13);
+  
+  localStorage.setItem("weatherLastUpdate", currentDateTime.getHours());
+  localStorage.setItem("weatherData", JSON.stringify(data));
+  return data;
 }
 
 // Notes
