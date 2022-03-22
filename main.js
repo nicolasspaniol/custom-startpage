@@ -43,7 +43,7 @@ function drawClock(weatherData = null) {
   const maxRadius = halfSize - 3;
   clockCtx.strokeStyle = "#fff";
   
-  const outerCircleRadius = maxRadius * .6;
+  const outerCircleRadius = maxRadius * .75;
 
   // Draw outer circle
   clockCtx.beginPath();
@@ -66,7 +66,7 @@ function drawClock(weatherData = null) {
 
       // Translates the values and their current point in time to 2d coordinates on the canvas
       function getPointPos(val, t) {
-        const distanceFromCenter = val * maxRadius * .4 + outerCircleRadius;
+        const distanceFromCenter = val * (maxRadius - outerCircleRadius) + outerCircleRadius;
         const angle = -t / 120 * Math.PI;
         return {
           x: Math.sin(angle) * distanceFromCenter,
