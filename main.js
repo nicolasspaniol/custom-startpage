@@ -17,82 +17,6 @@ const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
 
 ids.searchIcon.onclick = () => ids.searchForm.submit();
 
-// Clock
-
-let clockCtx;
-function initClock() {
-  const clockSize = ids.clock.getBoundingClientRect().width;
-  ids.clock.width = clockSize;
-  ids.clock.height = clockSize;
-  clockCtx = ids.clock.getContext("2d");
-}
-function drawClock(weatherData = null) {
-
-  // Clear transformations and content
-  clockCtx.setTransform(1, 0, 0, 1, 0, 0);
-  clockCtx.clearRect(0, 0, ids.clock.width, ids.clock.height);
-
-  // Move point (0, 0) to the center
-  const halfSize = ids.clock.width >> 1;
-  clockCtx.translate(halfSize, halfSize);
-  
-  // Rotate canvas according to time of the day
-  const rotation = ((currentDateTime.getHours() + 6) * 60 + currentDateTime.getMinutes()) / 360 * Math.PI;
-  clockCtx.rotate(rotation);
-
-  const maxRadius = halfSize - 3;
-  clockCtx.strokeStyle = "#fff";
-  
-  const outerCircleRadius = maxRadius * .75;
-
-  // Draw outer circle
-  clockCtx.beginPath();
-  clockCtx.arc(0, 0, outerCircleRadius, 0, Math.PI * 2, true);
-  clockCtx.stroke();
-
-  // Draw pointer
-  clockCtx.beginPath();
-  clockCtx.moveTo(0, outerCircleRadius);
-  clockCtx.lineTo(0, maxRadius);
-  clockCtx.stroke();
-
-  if (weatherData != null) {
-
-    // Draws those fancy lines around the clock
-    function drawCircularGraph(lineColor, data) {
-
-      // Transform raw data into spline
-      const spline = calculateSpline(data, 20, undefined, data[data.length - 1]);
-
-      // Translates the values and their current point in time to 2d coordinates on the canvas
-      function getPointPos(val, t) {
-        const distanceFromCenter = val * (maxRadius - outerCircleRadius) + outerCircleRadius;
-        const angle = -t / 120 * Math.PI;
-        return {
-          x: Math.sin(angle) * distanceFromCenter,
-          y: Math.cos(angle) * distanceFromCenter  
-        }
-      }
-
-      // Translate spline data into 2d coordinates around the clock
-      const points = spline.map((val, i) => getPointPos(val, i));
-
-      clockCtx.strokeStyle = lineColor;
-      clockCtx.beginPath();
-      clockCtx.moveTo(points[0].x, points[0].y);
-      for (let t = 1; t < points.length; t++) {
-        clockCtx.lineTo(points[t].x, points[t].y);
-      }
-      clockCtx.stroke();
-      clockCtx.closePath();
-    }
-
-    drawCircularGraph("#fff", weatherData.map(el => el.clouds / 100));
-    drawCircularGraph("#0df", weatherData.map(el => el.pop));
-  }
-}
-initClock();
-
 // DateTime
 
 let currentDateTime;
@@ -114,8 +38,6 @@ async function updateDateTime() {
     month: "numeric",
     day: "numeric"
   });
-
-  drawClock(await getWeatherData());
 }
 setInterval(updateDateTime, 10000);
 updateDateTime();
@@ -151,12 +73,69 @@ async function getWeatherData() {
   const jsonData = await fetch(url).catch(
     () => console.error("Unable to get weather data")
   );
-  const data = (await jsonData.json()).hourly.slice(0, 13);
+  const data = (await jsonData.json()).hourly.slice(0, 25);
   
   localStorage.setItem("weatherLastUpdate", currentDateTime.getHours());
   localStorage.setItem("weatherData", JSON.stringify(data));
   return data;
 }
+
+let weatherCtx = ids.weatherCnv.getContext("2d");
+
+function adjustWeatherSize() {
+  
+  // Get actual canvas dimensions in pixels
+  const {width, height} = ids.weatherCnv.getBoundingClientRect();
+
+  ids.weatherCnv.width = width;
+  ids.weatherCnv.height = height;
+}
+
+window.onresize = () => {
+  adjustWeatherSize();
+  drawWeatherGraphs();
+}
+adjustWeatherSize();
+
+async function drawWeatherGraphs() {
+
+  // Clear canvas content
+  weatherCtx.clearRect(0, 0, ids.weatherCnv.width, ids.weatherCnv.height);
+
+  const weatherData = await getWeatherData();
+
+  // Draws the curves for the weather data
+  function drawGraph(lineColor, data) {
+    
+    // Transform raw data into spline
+    const spline = calculateSpline(data, 20, undefined, data[data.length - 1]);
+
+    // Create padding inside the canvas
+    const width = ids.weatherCnv.width - 10;
+    const height = ids.weatherCnv.height - 10;
+
+    // Translate spline data into 2d canvas coordinates
+    let points = spline.map((val, i) => ({
+      x: i / spline.length * width + 5,
+      y: height - (val * height) + 5
+    }));
+
+    // Drawing commands
+    weatherCtx.strokeStyle = lineColor;
+    weatherCtx.beginPath();
+    weatherCtx.moveTo(points[0].x, points[0].y);
+    for (let t = 1; t < points.length; t++) {
+      weatherCtx.lineTo(points[t].x, points[t].y);
+    }
+    weatherCtx.stroke();
+    weatherCtx.closePath();
+  }
+
+  drawGraph("#fff", weatherData.map(el => el.clouds / 100));
+  drawGraph("#0df", weatherData.map(el => el.pop));
+}
+setInterval(drawWeatherGraphs, 60000);
+drawWeatherGraphs();
 
 // Notes
 

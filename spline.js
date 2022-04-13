@@ -1,3 +1,7 @@
+// Transforms an array of 'heights' into a proper curve passing through all these points
+// Returns another array of length (p-1)*s - 1 where p is the number of points passed and s is the step
+// The first and last elements of the returning array are the same as of the passed one
+// The 'start' and 'end' parameters are used to calculate the direction of the curve
 export default function calculateSpline(points, step, start = undefined, end = undefined) {
   const len = points.length;
 
