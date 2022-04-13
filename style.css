@@ -4,7 +4,6 @@ body {
   font-family: "Source Code Pro";
   font-size: 14px;
   color: white;
-  white-space: pre;
   
   background: url(bg.png);
   background-size: cover;
@@ -35,6 +34,10 @@ input, textarea {
 }
 input:focus, textarea:focus {
   outline: none;
+}
+
+p {
+  white-space: pre;
 }
 
 h1, h2 {
