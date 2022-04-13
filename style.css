@@ -4,6 +4,7 @@ body {
   font-family: "Source Code Pro";
   font-size: 14px;
   color: white;
+  white-space: pre;
   
   background: url(bg.png);
   background-size: cover;
