@@ -140,14 +140,14 @@ drawWeatherGraphs();
 // Notes
 
 window.onbeforeunload = () => {
-  localStorage.setItem("notes", encodeURIComponent(ids.notesQuad.value));
+  localStorage.setItem("notes", encodeURIComponent(ids.notesRegion.value));
 };
-ids.notesQuad.value = decodeURIComponent(localStorage.getItem("notes"));
+ids.notesRegion.value = decodeURIComponent(localStorage.getItem("notes"));
 
 // Bookmarks
 
 function displayBookmarkGroup(groupElem) {
-  ids.bookmarksQuad.querySelector(".bookmark-group.active")?.classList.remove("active");
+  ids.bookmarksRegion.querySelector(".bookmark-group.active")?.classList.remove("active");
   groupElem.classList.add("active");
 }
 function appendBookmarks(base, bookmarks) {
@@ -181,7 +181,7 @@ async function initBookmarks(path) {
     // Success
     async val => {
       const bookmarks = await val.json();
-      const baseBookmarkGroup = appendBookmarks(ids.bookmarksQuad, bookmarks);
+      const baseBookmarkGroup = appendBookmarks(ids.bookmarksRegion, bookmarks);
       displayBookmarkGroup(baseBookmarkGroup);
     },
     
@@ -191,4 +191,4 @@ async function initBookmarks(path) {
     }
   );
 }
-initBookmarks("bookmarks.json");
+initBookmarks("/json/bookmarks.json");

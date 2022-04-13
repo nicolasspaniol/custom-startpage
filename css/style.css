@@ -5,7 +5,7 @@ body {
   font-size: 14px;
   color: white;
   
-  background: url(bg.png);
+  background: url(/img/bg.png);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -15,11 +15,11 @@ body {
   grid-template-rows: 1fr 1fr;
   height: 100vh;
 
-  --quad-pad: 15px;
+  --region-pad: 15px;
 
   margin: 0;
-  padding: var(--quad-pad);
-  gap: var(--quad-pad);
+  padding: var(--region-pad);
+  gap: var(--region-pad);
   box-sizing: border-box;
 }
 
@@ -48,7 +48,7 @@ h1, h2 {
   margin: 3px;
 }
 
-.quad {
+.region {
   padding: 10px;
 }
 .outline {
@@ -63,15 +63,15 @@ h1, h2 {
   align-items: center;
 }
 
-/* Search bar quad */
+/* Search bar region */
 
-#search-quad {
+#search-region {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 20px;
 }
-#search-quad .fa-search {
+#search-region .fa-search {
   margin: 0 5px;
   cursor: pointer;
 }
@@ -82,7 +82,7 @@ h1, h2 {
   width: calc(100% - 30px);
 }
 
-/* Datetime and weather quad */
+/* Datetime and weather region */
 
 #time {
   font-size: 30px;
@@ -100,15 +100,15 @@ h1, h2 {
   justify-content: space-between;
 }
 
-/* Bookmarks quad */
+/* Bookmarks region */
 
-#bookmarks-quad {
+#bookmarks-region {
   grid-row: 1/3;
   grid-column: 3;
   overflow: hidden;
   text-align: center;
 }
-#bookmarks-quad h1 {margin-bottom: 10px;
+#bookmarks-region h1 {margin-bottom: 10px;
 }
 .bookmark-group {
   text-align: left;
