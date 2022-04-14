@@ -6,6 +6,7 @@ function displayBookmarkGroup(groupElem) {
   bookmarksRegion.querySelector(".bookmark-group.active")?.classList.remove("active");
   groupElem.classList.add("active");
 }
+
 function appendBookmarks(base, bookmarks) {
   const groupElem = document.createElement("div");
   groupElem.classList.add("bookmark-group");
@@ -18,8 +19,9 @@ function appendBookmarks(base, bookmarks) {
     bmElem.classList.add("bookmark");
 
     if (typeof bmValue === "object") {
+      bmElem.innerHTML += " >";
       const group = appendBookmarks(base, bmValue);
-      bmElem.onclick = () => displayBookmarkGroup();
+      bmElem.onclick = () => displayBookmarkGroup(group);
     }
     else {
       bmElem.href = bmValue;
@@ -32,11 +34,13 @@ function appendBookmarks(base, bookmarks) {
 
   return groupElem;
 }
-async function initBookmarks(path) {
+
+async function loadBookmarks(path) {
   fetch(path).then(
     // Success
     async val => {
       const bookmarks = await val.json();
+      console.log(bookmarks);
       const baseBookmarkGroup = appendBookmarks(bookmarksRegion, bookmarks);
       displayBookmarkGroup(baseBookmarkGroup);
     },
@@ -47,4 +51,4 @@ async function initBookmarks(path) {
     }
   );
 }
-initBookmarks("/json/bookmarks.json");
+loadBookmarks("/json/bookmarks.json");
