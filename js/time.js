@@ -1,23 +1,12 @@
 "use strict";
 
-import {
-  addUrlParameters,
-  getElementsWithId
-} from "./util.js";
 import calculateSpline from "./spline.js";
+import {addUrlParameters} from "./util.js";
 
-const ids = getElementsWithId();
+// Date & time
 
-// Global constants
-
-const WEATHER_URL = "https://api.openweathermap.org/data/2.5/onecall";
-const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
-
-// Search bar
-
-ids.searchIcon.onclick = () => ids.searchForm.submit();
-
-// DateTime
+const date = document.getElementById("date");
+const time = document.getElementById("time");
 
 let currentDateTime;
 
@@ -31,9 +20,9 @@ async function updateDateTime() {
   const hour = currentDateTime.getHours();
   const minute = currentDateTime.getMinutes();
   
-  ids.time.innerHTML = formatTime(hour, minute);
+  time.innerHTML = formatTime(hour, minute);
 
-  ids.date.innerHTML = currentDateTime.toLocaleString(undefined, {
+  date.innerHTML = currentDateTime.toLocaleString(undefined, {
     year: "numeric",
     month: "numeric",
     day: "numeric"
@@ -43,6 +32,11 @@ setInterval(updateDateTime, 10000);
 updateDateTime();
 
 // Weather
+
+const WEATHER_URL = "https://api.openweathermap.org/data/2.5/onecall";
+const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
+
+const weatherCnv = document.getElementById("weather-cnv");
 
 async function getWeatherData() {
   if (!navigator.geolocation) return null;
@@ -80,15 +74,14 @@ async function getWeatherData() {
   return data;
 }
 
-let weatherCtx = ids.weatherCnv.getContext("2d");
+let weatherCtx = weatherCnv.getContext("2d");
 
 function adjustWeatherSize() {
-  
   // Get actual canvas dimensions in pixels
-  const {width, height} = ids.weatherCnv.getBoundingClientRect();
+  const {width, height} = weatherCnv.getBoundingClientRect();
 
-  ids.weatherCnv.width = width;
-  ids.weatherCnv.height = height;
+  weatherCnv.width = width;
+  weatherCnv.height = height;
 }
 
 window.onresize = () => {
@@ -98,21 +91,19 @@ window.onresize = () => {
 adjustWeatherSize();
 
 async function drawWeatherGraphs() {
-
   // Clear canvas content
-  weatherCtx.clearRect(0, 0, ids.weatherCnv.width, ids.weatherCnv.height);
+  weatherCtx.clearRect(0, 0, weatherCnv.width, weatherCnv.height);
 
   const weatherData = await getWeatherData();
 
   // Draws the curves for the weather data
   function drawGraph(lineColor, data) {
-    
     // Transform raw data into spline
     const spline = calculateSpline(data, 20, undefined, data[data.length - 1]);
 
     // Create padding inside the canvas
-    const width = ids.weatherCnv.width - 10;
-    const height = ids.weatherCnv.height - 10;
+    const width = weatherCnv.width - 10;
+    const height = weatherCnv.height - 10;
 
     // Translate spline data into 2d canvas coordinates
     let points = spline.map((val, i) => ({
@@ -136,59 +127,3 @@ async function drawWeatherGraphs() {
 }
 setInterval(drawWeatherGraphs, 60000);
 drawWeatherGraphs();
-
-// Notes
-
-window.onbeforeunload = () => {
-  localStorage.setItem("notes", encodeURIComponent(ids.notesRegion.value));
-};
-ids.notesRegion.value = decodeURIComponent(localStorage.getItem("notes"));
-
-// Bookmarks
-
-function displayBookmarkGroup(groupElem) {
-  ids.bookmarksRegion.querySelector(".bookmark-group.active")?.classList.remove("active");
-  groupElem.classList.add("active");
-}
-function appendBookmarks(base, bookmarks) {
-  const groupElem = document.createElement("div");
-  groupElem.classList.add("bookmark-group");
-
-  for (let bmName in bookmarks) {
-    const bmValue = bookmarks[bmName];
-
-    const bmElem = document.createElement("a");
-    bmElem.innerHTML = bmName;
-    bmElem.classList.add("bookmark");
-
-    if (typeof bmValue === "object") {
-      const group = appendBookmarks(base, bmValue);
-      bmElem.onclick = () => displayBookmarkGroup();
-    }
-    else {
-      bmElem.href = bmValue;
-    }
-
-    groupElem.appendChild(bmElem);
-  }
-
-  base.appendChild(groupElem);
-
-  return groupElem;
-}
-async function initBookmarks(path) {
-  fetch(path).then(
-    // Success
-    async val => {
-      const bookmarks = await val.json();
-      const baseBookmarkGroup = appendBookmarks(ids.bookmarksRegion, bookmarks);
-      displayBookmarkGroup(baseBookmarkGroup);
-    },
-    
-    // Failure
-    () => {
-      console.error("Unable to get bookmarks");
-    }
-  );
-}
-initBookmarks("/json/bookmarks.json");
