@@ -36,8 +36,8 @@ input:focus, textarea:focus {
   outline: none;
 }
 
-p {
-  white-space: pre;
+a {
+  user-select: none;
 }
 
 h1, h2 {
