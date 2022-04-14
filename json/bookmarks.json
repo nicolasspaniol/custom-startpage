@@ -1,11 +1,11 @@
 {
   "Youtube": "https://www.youtube.com/feed/subscriptions",
-  "Spotify": "https://www.youtube.com/feed/subscriptions",
-  "Twitch": "https://www.youtube.com/feed/subscriptions",
-  "Reddit": "https://www.youtube.com/feed/subscriptions",
-  "Hacker News": "https://www.youtube.com/feed/subscriptions",
-  "Twitter": "https://www.youtube.com/feed/subscriptions",
-  "Skiley": "https://www.youtube.com/feed/subscriptions",
+  "Spotify": "https://open.spotify.com/",
+  "Twitch": "https://www.twitch.tv/",
+  "Reddit": "https://www.reddit.com/",
+  "Hacker News": "https://news.ycombinator.com/",
+  "Twitter": "https://twitter.com/home",
+  "Skiley": "https://skiley.net/",
   "Google": {
     "Classroom": "https://classroom.google.com/u/1/h",
     "Gmail": "https://mail.google.com/mail/u/0"
