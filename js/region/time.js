@@ -1,7 +1,7 @@
 "use strict";
 
-import calculateSpline from "./spline.js";
-import {addUrlParameters} from "./util.js";
+import calculateSpline from "/js/spline.js";
+import {addUrlParameters} from "/js/util.js";
 
 // Date & time
 
