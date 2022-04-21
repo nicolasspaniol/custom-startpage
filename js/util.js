@@ -1,13 +1,5 @@
 'use strict';
 
-export function getElementsWithId() {
-  const elements = {};
-  for (let elem of document.querySelectorAll("*[id]")) {
-    elements[toCamelCase(elem.id)] = elem;
-  }
-  return elements;
-}
-
 export function addUrlParameters(url, params) {
   const paramArr = [];
 
