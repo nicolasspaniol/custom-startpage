@@ -41,6 +41,7 @@ a {
 }
 
 h1, h2 {
+  white-space: pre;
   user-select: none;
   font-size: inherit;
   text-decoration: none;
