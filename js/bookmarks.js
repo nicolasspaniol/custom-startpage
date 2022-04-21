@@ -40,7 +40,6 @@ async function loadBookmarks(path) {
     // Success
     async val => {
       const bookmarks = await val.json();
-      console.log(bookmarks);
       const baseBookmarkGroup = appendBookmarks(bookmarksRegion, bookmarks);
       displayBookmarkGroup(baseBookmarkGroup);
     },

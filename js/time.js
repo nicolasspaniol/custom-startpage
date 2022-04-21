@@ -53,12 +53,11 @@ async function getWeatherData() {
   }).catch(
     () => console.error("Unable to retrieve current position")
   );
-  const lat  = pos.coords.latitude;
-  const lon = pos.coords.longitude;
+  const {latitude, longitude} = pos.coords;
 
   const url = addUrlParameters(WEATHER_URL, {
-    lat,
-    lon,
+    latitude,
+    longitude,
     appid: WEATHER_KEY,
     exclude: "minutely,daily,alerts,current",
     units: "metric"
