@@ -56,8 +56,8 @@ async function getWeatherData() {
   const {latitude, longitude} = pos.coords;
 
   const url = addUrlParameters(WEATHER_URL, {
-    latitude,
-    longitude,
+    lat: latitude,
+    lon: longitude,
     appid: WEATHER_KEY,
     exclude: "minutely,daily,alerts,current",
     units: "metric"
