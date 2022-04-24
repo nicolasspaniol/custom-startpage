@@ -124,3 +124,28 @@ h1, h2 {
   flex-direction: column;
   gap: 10px;
 }
+
+/* Popup dialog */
+.dialog {
+  position: fixed;
+  border-radius: 5px;
+  border: 1px solid white;position: fixed;
+
+  background: url(/img/bg.png);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+#fixed {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
