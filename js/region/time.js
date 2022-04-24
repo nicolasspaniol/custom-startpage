@@ -39,12 +39,15 @@ const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
 const weatherCnv = document.getElementById("weather-cnv");
 
 async function getWeatherData() {
+  // Make sure the browser has geolocation support
   if (!navigator.geolocation) return null;
 
+  // If the hour is the same as last visit, use previous data
   if (localStorage.getItem("weatherLastUpdate") == currentDateTime.getHours()) {
     return JSON.parse(localStorage.getItem("weatherData"));
   }
 
+  // Request geolocation
   const pos = await new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       success => resolve(success),
@@ -63,13 +66,16 @@ async function getWeatherData() {
     units: "metric"
   });
 
+  // Fetch weather data
   const jsonData = await fetch(url).catch(
     () => console.error("Unable to get weather data")
   );
   const data = (await jsonData.json()).hourly.slice(0, 25);
   
+  // Store requested data and current hour
   localStorage.setItem("weatherLastUpdate", currentDateTime.getHours());
   localStorage.setItem("weatherData", JSON.stringify(data));
+  
   return data;
 }
 
