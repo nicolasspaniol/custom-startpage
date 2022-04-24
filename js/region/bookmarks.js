@@ -50,4 +50,4 @@ async function loadBookmarks(path) {
     }
   );
 }
-loadBookmarks("/json/bookmarks.json");
+loadBookmarks("/data/bookmarks.json");

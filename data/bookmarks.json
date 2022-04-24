@@ -1,9 +1,9 @@
 {
-  "Youtube": "https://www.youtube.com/feed/subscriptions",
+  "YT": "https://www.youtube.com/feed/subscriptions",
   "Spotify": "https://open.spotify.com/",
   "Twitch": "https://www.twitch.tv/",
   "Reddit": "https://www.reddit.com/",
-  "Hacker News": "https://news.ycombinator.com/",
+  "HN": "https://news.ycombinator.com/",
   "Twitter": "https://twitter.com/home",
   "Skiley": "https://skiley.net/",
   "Google": {
