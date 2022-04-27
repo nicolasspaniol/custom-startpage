@@ -99,30 +99,6 @@ h1, h2 {
   justify-content: space-between;
 }
 
-/* Bookmarks region */
-
-#bookmarks-region {
-  grid-row: 1/3;
-  grid-column: 3;
-  overflow: hidden;
-  text-align: center;
-}
-#bookmarks-region h1 {margin-bottom: 10px;
-}
-.bookmark-group {
-  text-align: left;
-  display: none;
-}
-.bookmark {
-  color: white;
-  text-decoration: none;
-}
-.bookmark-group.active {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 /* Popup dialog */
 
 .dialog {
