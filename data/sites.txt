@@ -1,0 +1,9 @@
+youtube,yt=https://www.youtube.com/feed/subscriptions
+spotify=https://open.spotify.com/
+twitch,ttv=https://www.twitch.tv/
+reddit=https://www.reddit.com/
+hacker news,hn=https://news.ycombinator.com/
+twitter,tt=https://twitter.com/home
+skiley=https://skiley.net/
+google classroom,classroom=https://classroom.google.com/u/1/h
+gmail=https://mail.google.com/mail/u/0
