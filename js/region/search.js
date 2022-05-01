@@ -20,7 +20,7 @@ for (let bm of bookmarks.split("\n")) {
   let [names, link] = bm.split("=");
   names = names.split(",");
   for (let name of names) {
-    nameTable[name] = i;
+    nameTable[name.toLowerCase()] = i;
   }
   links.push([names[0], link]);
   i++;
@@ -30,10 +30,11 @@ async function handleSearchInput() {
   searchSuggestions.innerHTML = "";
   if (searchInput.value == "") return;
 
+  const search = searchInput.value.toLowerCase();
   const suggestionSet = new Set();
 
   for (let [k, v] of Object.entries(nameTable)) {
-    if (k.startsWith(searchInput.value)) {
+    if (k.startsWith(search)) {
       suggestionSet.add(links[v]);
     }
   }
