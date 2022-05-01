@@ -20,9 +20,9 @@ for (let bm of bookmarks.split("\n")) {
   let [names, link] = bm.split("=");
   names = names.split(",");
   for (let name of names) {
-    nameTable[name.toLowerCase()] = i;
+    nameTable[name.trim().toLowerCase()] = i;
   }
-  links.push([names[0], link]);
+  links.push([names[0], link.trim()]);
   i++;
 }
 
