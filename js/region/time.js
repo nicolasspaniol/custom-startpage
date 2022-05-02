@@ -5,38 +5,24 @@ import {addUrlParameters} from "/js/util.js";
 
 // Date & time
 
-const date = document.getElementById("date");
-const time = document.getElementById("time");
+const WEATHER_URL = "https://api.openweathermap.org/data/2.5/onecall";
+const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
 
 let currentDateTime;
-
-function formatTime(hours, mins) {
-  return hours.toString().padStart(2, "0") + ":" + mins.toString().padStart(2, "0");
-}
 
 async function updateDateTime() {
   currentDateTime = new Date();
   
-  const hour = currentDateTime.getHours();
-  const minute = currentDateTime.getMinutes();
+  const hours = currentDateTime.getHours();
+  const mins = currentDateTime.getMinutes();
   
-  time.innerHTML = formatTime(hour, minute);
-
-  date.innerHTML = currentDateTime.toLocaleString(undefined, {
+  ids.time.innerHTML = hours.toString().padStart(2, "0") + ":" + mins.toString().padStart(2, "0");
+  ids.date.innerHTML = currentDateTime.toLocaleString(undefined, {
     year: "numeric",
     month: "numeric",
     day: "numeric"
   });
 }
-setInterval(updateDateTime, 10000);
-updateDateTime();
-
-// Weather
-
-const WEATHER_URL = "https://api.openweathermap.org/data/2.5/onecall";
-const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
-
-const weatherCnv = document.getElementById("weather-cnv");
 
 async function getWeatherData() {
   // Make sure the browser has geolocation support
@@ -58,6 +44,7 @@ async function getWeatherData() {
   );
   const {latitude, longitude} = pos.coords;
 
+  // Fetch weather data
   const url = addUrlParameters(WEATHER_URL, {
     lat: latitude,
     lon: longitude,
@@ -65,8 +52,6 @@ async function getWeatherData() {
     exclude: "minutely,daily,alerts,current",
     units: "metric"
   });
-
-  // Fetch weather data
   const jsonData = await fetch(url).catch(
     () => console.error("Unable to get weather data")
   );
@@ -79,25 +64,11 @@ async function getWeatherData() {
   return data;
 }
 
-let weatherCtx = weatherCnv.getContext("2d");
-
-function adjustWeatherSize() {
-  // Get actual canvas dimensions in pixels
-  const {width, height} = weatherCnv.getBoundingClientRect();
-
-  weatherCnv.width = width;
-  weatherCnv.height = height;
-}
-
-window.addEventListener("resize", () => {
-  adjustWeatherSize();
-  drawWeatherGraphs();
-});
-adjustWeatherSize();
+let weatherCtx = ids.weatherCnv.getContext("2d");
 
 async function drawWeatherGraphs() {
   // Clear canvas content
-  weatherCtx.clearRect(0, 0, weatherCnv.width, weatherCnv.height);
+  weatherCtx.clearRect(0, 0, ids.weatherCnv.width, ids.weatherCnv.height);
 
   const weatherData = await getWeatherData();
 
@@ -107,8 +78,8 @@ async function drawWeatherGraphs() {
     const spline = calculateSpline(data, 20, undefined, data[data.length - 1]);
 
     // Create padding inside the canvas
-    const width = weatherCnv.width - 10;
-    const height = weatherCnv.height - 10;
+    const width = ids.weatherCnv.width - 10;
+    const height = ids.weatherCnv.height - 10;
 
     // Translate spline data into 2d canvas coordinates
     let points = spline.map((val, i) => ({
@@ -130,5 +101,27 @@ async function drawWeatherGraphs() {
   drawGraph("#fff", weatherData.map(el => el.clouds / 100));
   drawGraph("#0df", weatherData.map(el => el.pop));
 }
-setInterval(drawWeatherGraphs, 60000);
-drawWeatherGraphs();
+
+function adjustWeatherCnvSize() {
+  const {width, height} = ids.weatherCnv.getBoundingClientRect();
+
+  ids.weatherCnv.width = width;
+  ids.weatherCnv.height = height;
+}
+
+// Init
+
+adjustWeatherCnvSize();
+
+window.addEventListener("resize", () => {
+  adjustWeatherCnvSize();
+  drawWeatherGraphs();
+});
+
+function update() {
+  updateDateTime();
+  drawWeatherGraphs();
+}
+
+setInterval(update, 5000);
+update();

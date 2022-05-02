@@ -1,3 +1,3 @@
-import * as util from "/js/util.js";
+import {getAllElementsWithId} from "/js/util.js";
 
-window.ids = util.getAllElementsWithId();
+window.ids = getAllElementsWithId();
