@@ -89,10 +89,10 @@ function adjustWeatherSize() {
   weatherCnv.height = height;
 }
 
-window.onresize = () => {
+window.addEventListener("resize", () => {
   adjustWeatherSize();
   drawWeatherGraphs();
-}
+});
 adjustWeatherSize();
 
 async function drawWeatherGraphs() {

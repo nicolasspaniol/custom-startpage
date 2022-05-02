@@ -2,7 +2,7 @@
 
 const textArea = document.getElementById("notes-region");
 
-window.onbeforeunload = () => {
+window.addEventListener("beforeunload", () => {
   localStorage.setItem("notes", encodeURIComponent(textArea.value));
-};
+});
 textArea.value = decodeURIComponent(localStorage.getItem("notes"));
