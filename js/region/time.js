@@ -68,7 +68,7 @@ let weatherCtx = ids.weatherCnv.getContext("2d");
 
 async function drawWeatherGraphs() {
   // Clear canvas content
-  weatherCtx.clearRect(0, 0, ids.weatherCnv.width, ids.weatherCnv.height);
+  weatherCtx.clearContent();
 
   const weatherData = await getWeatherData();
 
@@ -111,12 +111,8 @@ function adjustWeatherCnvSize() {
 
 // Init
 
-adjustWeatherCnvSize();
-
-window.addEventListener("resize", () => {
-  adjustWeatherCnvSize();
-  drawWeatherGraphs();
-});
+ids.weatherCnv.addEventListener("autoresize", drawWeatherGraphs);
+ids.weatherCnv.setAutoResize(true);
 
 function update() {
   updateDateTime();
