@@ -102,13 +102,6 @@ async function drawWeatherGraphs() {
   drawGraph("#0df", weatherData.map(el => el.pop));
 }
 
-function adjustWeatherCnvSize() {
-  const {width, height} = ids.weatherCnv.getBoundingClientRect();
-
-  ids.weatherCnv.width = width;
-  ids.weatherCnv.height = height;
-}
-
 // Init
 
 ids.weatherCnv.addEventListener("autoresize", drawWeatherGraphs);
