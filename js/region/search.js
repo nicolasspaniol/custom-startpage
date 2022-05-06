@@ -64,7 +64,7 @@ function appendSuggestion(id) {
 }
 
 async function handleSearchInput() {
-  const search = searchInput.value.trim().toLowerCase();
+  const search = searchInput.value.trimStart().toLowerCase();
   clearSuggestions();
   if (search.length == 0) return;
 
