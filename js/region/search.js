@@ -36,6 +36,7 @@ function parseBookmark(bm) {
 
   bookmarks.push([name, link]);
 }
+
 async function loadBookmarks() {
   tags = {};
   names = [];
@@ -53,6 +54,23 @@ loadBookmarks();
 function clearSuggestions() {
   searchSuggestions.innerHTML = "";
 }
+
+function appendTag(tagName) {
+  const elem = document.createElement("a");
+  elem.innerHTML = tagName;
+  elem.href = "";
+  elem.classList.add("suggestion");
+  elem.addEventListener("click", e => {
+    clearSuggestions();
+    for (let id of tags[tagName]) {
+      appendSuggestion(id);
+    }
+    e.preventDefault();
+    searchSuggestions.children[0].focus();
+  });
+
+  searchSuggestions.append(elem);
+}
 function appendSuggestion(id) {
   const suggestion = bookmarks[id];
 
@@ -68,16 +86,19 @@ async function handleSearchInput() {
   clearSuggestions();
   if (search.length == 0) return;
 
-  const suggestionSet = new Set();
-
-  for (let [name, id] of names) {
-    if (name.startsWith(search)) {
-      suggestionSet.add(id);
+  if (search[0] == "#") {
+    for (let tag in tags) {
+      if (tag.startsWith(search)) {
+        appendTag(tag);
+      }
     }
   }
-
-  for (let id of suggestionSet) {
-    appendSuggestion(id);
+  else {
+    const suggestions = names.filter(([name, id]) => name.startsWith(search));
+    const suggestionSet = new Set(suggestions);
+    for (let sg of suggestionSet) {
+      appendSuggestion(sg[1]);
+    }
   }
 }
 searchInput.addEventListener("input", handleSearchInput);
