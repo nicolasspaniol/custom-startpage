@@ -75,6 +75,7 @@ function appendTag(tagName) {
 
   searchSuggestions.append(elem);
 }
+
 function appendSuggestion(id) {
   const suggestion = bookmarks[id];
 
@@ -91,17 +92,20 @@ async function handleSearchInput() {
   if (search.length == 0) return;
 
   if (search[0] == "#") {
-    for (let tag in tags) {
-      if (matchSearch(search, tag)) {
-        appendTag(tag);
-      }
+    const tagSuggestions = Object.keys(tags)
+      .map((tag) => [tag, matchSearch(search, tag)])
+      .filter(([, diff]) => diff >= 0)
+      .sort(([, diffA], [, diffB]) => diffA - diffB);
+
+    for (let tag of tagSuggestions) {
+      appendTag(tag[0]);
     }
   }
   else {
     const suggestions = names
       .map(([name, id]) => [id, matchSearch(search, name)])
       .filter(([, diff]) => diff >= 0)
-      .sort(([, diffA], [, diffB]) => diffA > diffB)
+      .sort(([, diffA], [, diffB]) => diffA - diffB)
       .map(([id]) => id);
 
     const suggestionSet = new Set(suggestions);
