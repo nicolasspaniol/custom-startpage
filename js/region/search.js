@@ -1,9 +1,9 @@
 "use strict";
 
-const searchIcon = document.getElementById("search-icon");
-const searchForm = document.getElementById("search-form");
-const searchInput = document.getElementById("search");
-const searchSuggestions = document.getElementById("search-suggestions");
+const searchIcon = ids.searchIcon;
+const searchForm = ids.searchForm;
+const searchInput = ids.search;
+const searchSuggestions = ids.searchSuggestions;
 
 searchIcon.onclick = () => searchForm.submit();
 

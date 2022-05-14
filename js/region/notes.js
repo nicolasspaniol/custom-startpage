@@ -1,6 +1,6 @@
 "use strict";
 
-const textArea = document.getElementById("notes-region");
+const textArea = ids.notesRegion;
 
 // All notes are stored in the browser's local storage
 // Loads the notes
