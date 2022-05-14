@@ -30,7 +30,10 @@ function parseBookmark(bm) {
     }
     else {
       name ??= el;
-      names.push([el.toLowerCase(), id]);
+      let spaceIndex = -1;
+      do {
+        names.push([el.slice(spaceIndex + 1).toLowerCase(), id]);
+      } while ((spaceIndex = el.indexOf(" ", spaceIndex + 1)) != -1);
     }
   }
 
@@ -61,11 +64,12 @@ function appendTag(tagName) {
   elem.href = "";
   elem.classList.add("suggestion");
   elem.addEventListener("click", e => {
+    e.preventDefault();
+    
     clearSuggestions();
     for (let id of tags[tagName]) {
       appendSuggestion(id);
     }
-    e.preventDefault();
     searchSuggestions.children[0].focus();
   });
 
@@ -88,17 +92,39 @@ async function handleSearchInput() {
 
   if (search[0] == "#") {
     for (let tag in tags) {
-      if (tag.startsWith(search)) {
+      if (matchSearch(search, tag)) {
         appendTag(tag);
       }
     }
   }
   else {
-    const suggestions = names.filter(([name, id]) => name.startsWith(search));
+    const suggestions = names
+      .map(([name, id]) => [id, matchSearch(search, name)])
+      .filter(([, diff]) => diff >= 0)
+      .sort(([, diffA], [, diffB]) => diffA > diffB)
+      .map(([id]) => id);
+
     const suggestionSet = new Set(suggestions);
     for (let sg of suggestionSet) {
-      appendSuggestion(sg[1]);
+      appendSuggestion(sg);
     }
   }
 }
 searchInput.addEventListener("input", handleSearchInput);
+
+function matchSearch(searchTerm, match) {
+  if (searchTerm[0] != match[0]) {
+    return -1;
+  }
+
+  let i = 0;
+  let diff = 0;
+  for (let c of searchTerm) {
+    while (i < match.length && match[i] != c) {
+      i++;
+      diff++;
+    }
+    i++;
+  }
+  return i <= match.length ? diff : -1;
+}
