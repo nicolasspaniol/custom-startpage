@@ -6,7 +6,7 @@ import {addUrlParameters} from "/js/util.js";
 // Date & time
 
 const WEATHER_URL = "https://api.openweathermap.org/data/2.5/onecall";
-const WEATHER_KEY = "611a749b281ce7dfa7c085a47bd1eda8";
+const WEATHER_KEY = await (await fetch("/data/weather_key.txt")).text();
 
 let currentDateTime;
 
